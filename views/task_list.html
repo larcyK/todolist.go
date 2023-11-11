@@ -6,16 +6,29 @@
 <table>
     <tr>
         <th>ID</th>
-        <th>タイトル</th>
         <th>登録日</th>
+        <th>タイトル</th>
+        <th>説明</th>
         <th>状態</th>
     </tr>
     {{ range $task := .Tasks }}
     <tr>
-        <td><a href="/task/{{ $task.ID }}">{{ $task.ID }}</a></td>
-        <td>{{ $task.Title }}</td>
-        <td>{{ $task.CreatedAt }}</td>
-        <td>{{ if $task.IsDone }}済{{ end }}</td>
+        <td>{{ $task.ID }}</td>
+        <td>{{ $task.CreatedAt.Format "2006-01-02 15:04:05" }}</td>
+        <td><a href="/task/{{ $task.ID }}">{{ $task.Title }}</a></td>
+        {{ $threshold := 20 }}
+        <td class="long-text" style="width: 30%">
+            {{ if gt (len $task.Detail) $threshold }}
+                <details>
+                    <summary>{{ printf (printf "%%.%ds..." $threshold) $task.Detail }}</summary>
+                    <br>
+                    {{ $task.Detail }}
+                </details>
+            {{ else }}
+                {{ printf (printf "%%.%ds" $threshold) $task.Detail }}
+            {{ end }}
+        </td>
+        <td>{{ if $task.IsDone }}✅{{ end }}</td>
     </tr>
     {{ end }}
 </table>
