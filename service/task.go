@@ -18,16 +18,36 @@ func TaskList(ctx *gin.Context) {
 		return
 	}
 
+	// Get query parameter
+	kw := ctx.Query("kw")
+	dn := ctx.Query("dn") == "on"
+
+	fmt.Printf("kw: `%s`, dn: `%s`\n", kw, dn)
+
 	// Get tasks in DB
 	var tasks []database.Task
-	err = db.Select(&tasks, "SELECT * FROM tasks") // Use DB#Select for multiple entries
+	var conditions []string
+	if kw != "" {
+		conditions = append(conditions, fmt.Sprintf("title LIKE '%%%s%%'", kw))
+	}
+	if dn {
+		conditions = append(conditions, fmt.Sprintf("is_done=%t", !dn))
+	}
+	query := "SELECT * FROM tasks"
+	if len(conditions) > 0 {
+		query += " WHERE " + conditions[0]
+		for _, c := range conditions[1:] {
+			query += " AND " + c
+		}
+	}
+	err = db.Select(&tasks, query)
 	if err != nil {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
 
 	// Render tasks
-	ctx.HTML(http.StatusOK, "task_list.html", gin.H{"Title": "Task list", "Tasks": tasks})
+	ctx.HTML(http.StatusOK, "task_list.html", gin.H{"Title": "Task list", "Tasks": tasks, "Kw": kw, "Dn": dn})
 }
 
 // ShowTask renders a task with given ID
