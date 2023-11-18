@@ -62,7 +62,10 @@ func main() {
 	// ログイン
 	engine.GET("/login", service.LoginForm)
 	engine.POST("/login", service.Login)
+	// ログアウト
+	engine.GET("/logout", service.Logout)
 
 	// start server
 	engine.Run(fmt.Sprintf(":%d", port))
+
 }

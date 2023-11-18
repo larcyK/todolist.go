@@ -145,3 +145,10 @@ func LoginCheck(ctx *gin.Context) {
 	}
 }
 
+func Logout(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	session.Clear()
+	session.Options(sessions.Options{MaxAge: -1})
+	session.Save()
+	ctx.Redirect(http.StatusFound, "/")
+}
