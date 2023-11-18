@@ -22,8 +22,6 @@ func TaskList(ctx *gin.Context) {
 	kw := ctx.Query("kw")
 	dn := ctx.Query("dn") == "on"
 
-	fmt.Printf("kw: `%s`, dn: `%s`\n", kw, dn)
-
 	// Get tasks in DB
 	var tasks []database.Task
 	var conditions []string
