@@ -143,3 +143,38 @@ func Logout(ctx *gin.Context) {
 	session.Save()
 	ctx.Redirect(http.StatusFound, "/")
 }
+
+func UserInfo(ctx *gin.Context) {
+	userID := sessions.Default(ctx).Get(userkey)
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	var user database.User
+	err = db.Get(&user, "SELECT * FROM users WHERE id = ?", userID)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	ctx.HTML(http.StatusOK, "user_info.html", gin.H{"Title": "User info", "User": user})
+}
+
+func DeleteUser(ctx *gin.Context) {
+	userID := sessions.Default(ctx).Get(userkey)
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	_, err = db.Exec("UPDATE users SET valid = false WHERE id = ?", userID)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	session := sessions.Default(ctx)
+	session.Clear()
+	session.Options(sessions.Options{MaxAge: -1})
+	session.Save()
+	// ctx.Redirect(http.StatusFound, "/")
+}

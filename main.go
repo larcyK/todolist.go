@@ -53,7 +53,19 @@ func main() {
 		taskGroup.GET("/edit/:id", service.OwnershipCheck, service.EditTaskForm)
 		taskGroup.POST("/edit/:id", service.OwnershipCheck, service.UpdateTask)
 		// 既存タスクの削除
-		taskGroup.GET("/delete/:id", service.OwnershipCheck, service.DeleteTask)
+		taskGroup.DELETE("/delete/:id", service.OwnershipCheck, service.DeleteTask)
+	}
+
+	userGroup := engine.Group("/user")
+	userGroup.Use(service.LoginCheck)
+	{
+		// ユーザ情報
+		userGroup.GET("info", service.UserInfo)
+		// ユーザ情報の編集
+		// userGroup.GET("/edit", service.EditUserForm)
+		// userGroup.POST("/edit", service.UpdateUser)
+		// ユーザの削除
+		userGroup.DELETE("/delete", service.DeleteUser)
 	}
 
 	// ユーザ登録

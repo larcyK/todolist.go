@@ -50,7 +50,7 @@ func TaskList(ctx *gin.Context) {
 	}
 
 	// Render tasks
-	ctx.HTML(http.StatusOK, "task_list.html", gin.H{"Title": "Task list", "Tasks": tasks, "Kw": kw, "Dn": dn})
+	ctx.HTML(http.StatusOK, "task_list.html", gin.H{"Title": "Task list", "Tasks": tasks, "Kw": kw, "Dn": dn, "User": userID})
 }
 
 // ShowTask renders a task with given ID
@@ -232,5 +232,5 @@ func DeleteTask(ctx *gin.Context) {
 	}
 	tx.Commit()
 	// Redirect to /list
-	ctx.Redirect(http.StatusFound, "/list")
+	// ctx.Redirect(http.StatusFound, "/list")
 }

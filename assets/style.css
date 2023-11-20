@@ -41,3 +41,19 @@ table td.long-text {
     overflow-wrap: break-word;
     word-break: normal;
 }
+
+.info div {
+    display:flex;
+    justify-content: flex-start;
+    padding: 6px;
+    border-bottom: 1px dotted #c7c7c7;
+}
+
+.info dt {
+    width: 120px;   
+}
+
+.info dd {
+    margin-left: 0;
+    width: calc(100% - 120px);
+}

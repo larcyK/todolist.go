@@ -1,16 +1,26 @@
 {{ template "header" . }}
 <h1>Task {{ .ID }}</h1>
-<dl>
-    <dt>Title</dt>
-    <dd>{{ .Title }}</dd>
-    <dt>Created at</dt>
-    <dd>{{ .CreatedAt }}</dd>
-    <dt>Detail</dt>
-    <dd>{{ .Detail }}</dd>
-    <dt>Status</dt>
-    <dd><input type="checkbox" {{ if .IsDone }}checked {{ end }}disabled/>済</dd>
+<dl class="info">
+    <div>
+        <dt>Title</dt>
+        <dd>{{ .Title }}</dd>
+    </div>
+    <div>
+        <dt>Created at</dt>
+        <dd>{{ .CreatedAt.Format "2006-01-02 15:04:05" }}</dd>
+    </div>
+    <div>
+        <dt>Detail</dt>
+        <dd>{{ .Detail }}</dd>
+    </div>
+    <div>
+        <dt>Status</dt>
+        <dd><input type="checkbox" {{ if .IsDone }}checked {{ end }}disabled/>済</dd>
+    </div>
 </dl>
 <a href="/list"><button type="button">リストへ戻る</button></a>
 <a href="/task/edit/{{ .ID }}"><button type="button">編集</button></a>
-<button type="button" onclick="confirm_delete({{ .ID }})">削除</button>
+<form id="task_delete" action="/task/delete/{{ .ID }}" method="DELETE">
+    <button type="button" onclick="confirm_task_delete({{ .ID }}, {{ .Title }})">削除</button>
+</form>
 {{ template "footer" }}

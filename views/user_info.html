@@ -1,0 +1,20 @@
+{{ template "header" . }}
+<h1>User Info</h1>
+<dl class="info">
+    <div>
+        <dt>ID</dt>
+        <dd>{{ .User.ID }}</dd>
+    </div>
+    <div>
+        <dt>Name</dt>
+        <dd>{{ .User.Name }}</dd>
+    </div>
+    <div>
+        <dt>Created at</dt>
+        <dd>{{ .User.CreatedAt.Format "2006-01-02 15:04:05" }}</dd>
+    </div>
+</dl>
+<a href="/list"><button type="button">リストへ戻る</button></a>
+<a href="/user/edit/{{ .User.ID }}"><button type="button">編集</button></a>
+<button type="button" onclick="confirm_user_delete('{{ .User.ID }}', '{{ .User.Name }}')">削除</button>
+{{ template "footer" }}

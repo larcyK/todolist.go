@@ -15,9 +15,12 @@ type Task struct {
 }
 
 type User struct {
-	ID       uint64 `db:"id"`
-	Name     string `db:"name"`
-	Password []byte `db:"password"`
+	ID        uint64    `db:"id"`
+	Name      string    `db:"name"`
+	Password  []byte    `db:"password"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+	Valid     bool      `db:"valid"`
 }
 
 type Ownership struct {
