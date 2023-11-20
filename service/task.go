@@ -5,12 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	database "todolist.go/db"
 )
 
 // TaskList renders list of tasks in DB
 func TaskList(ctx *gin.Context) {
+	userID := sessions.Default(ctx).Get("user")
 	// Get DB connection
 	db, err := database.GetConnection()
 	if err != nil {
@@ -24,6 +26,7 @@ func TaskList(ctx *gin.Context) {
 
 	// Get tasks in DB
 	var tasks []database.Task
+
 	var conditions []string
 	if kw != "" {
 		conditions = append(conditions, fmt.Sprintf("title LIKE '%%%s%%'", kw))
@@ -31,7 +34,9 @@ func TaskList(ctx *gin.Context) {
 	if dn {
 		conditions = append(conditions, fmt.Sprintf("is_done=%t", !dn))
 	}
-	query := "SELECT * FROM tasks"
+	conditions = append(conditions, fmt.Sprintf("user_id=%d", userID))
+
+	query := "SELECT tasks.* FROM tasks INNER JOIN ownership ON task_id = id "
 	if len(conditions) > 0 {
 		query += " WHERE " + conditions[0]
 		for _, c := range conditions[1:] {
@@ -64,9 +69,26 @@ func ShowTask(ctx *gin.Context) {
 		return
 	}
 
-	// Get a task with given ID
+	var owenership []database.Ownership
+	err = db.Select(&owenership, "SELECT * FROM ownership WHERE task_id=?", id)
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
+	if len(owenership) == 0 {
+		Error(http.StatusBadRequest, "No such task")(ctx)
+		return
+	}
+
+	userID := sessions.Default(ctx).Get("user")
+	if owenership[0].UserID != userID {
+		Error(http.StatusBadRequest, "You don't have permission to access this task")(ctx)
+		return
+	}
+
+	// Get task with given ID
 	var task database.Task
-	err = db.Get(&task, "SELECT * FROM tasks WHERE id=?", id) // Use DB#Get for one entry
+	err = db.Get(&task, "SELECT * FROM tasks WHERE id=?", id)
 	if err != nil {
 		Error(http.StatusBadRequest, err.Error())(ctx)
 		return
@@ -82,6 +104,7 @@ func NewTaskForm(ctx *gin.Context) {
 }
 
 func RegisterTask(ctx *gin.Context) {
+	userID := sessions.Default(ctx).Get("user")
 	// Get task title
 	title, exist := ctx.GetPostForm("title")
 	if !exist {
@@ -100,18 +123,29 @@ func RegisterTask(ctx *gin.Context) {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	// Register task
+	tx := db.MustBegin()
 	// Create new data with given title on DB
-	result, err := db.Exec("INSERT INTO tasks (title, detail) VALUES (?, ?)", title, detail)
+	result, err := tx.Exec("INSERT INTO tasks (title, detail) VALUES (?)", title, detail)
 	if err != nil {
+		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
-	// Render status
-	path := "/list" // デフォルトではタスク一覧ページへ戻る
-	if id, err := result.LastInsertId(); err == nil {
-		path = fmt.Sprintf("/task/%d", id) // 正常にIDを取得できた場合は /task/<id> へ戻る
+	taskID, err := result.LastInsertId()
+	if err != nil {
+		tx.Rollback()
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
 	}
-	ctx.Redirect(http.StatusFound, path)
+	_, err = tx.Exec("INSERT INTO ownership (user_id, task_id) VALUES (?, ?)", userID, taskID)
+	if err != nil {
+		tx.Rollback()
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	tx.Commit()
+	ctx.Redirect(http.StatusFound, fmt.Sprintf("/task/%d", taskID))
 }
 
 func EditTaskForm(ctx *gin.Context) {

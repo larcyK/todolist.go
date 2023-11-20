@@ -50,10 +50,10 @@ func main() {
 		taskGroup.GET("/new", service.NewTaskForm)
 		taskGroup.POST("/new", service.RegisterTask)
 		// 既存タスクの編集
-		taskGroup.GET("/edit/:id", service.EditTaskForm)
-		taskGroup.POST("/edit/:id", service.NotImplemented)
+		taskGroup.GET("/edit/:id", service.OwnershipCheck, service.EditTaskForm)
+		taskGroup.POST("/edit/:id", service.OwnershipCheck, service.NotImplemented)
 		// 既存タスクの削除
-		taskGroup.GET("/delete/:id", service.DeleteTask)
+		taskGroup.GET("/delete/:id", service.OwnershipCheck, service.DeleteTask)
 	}
 
 	// ユーザ登録

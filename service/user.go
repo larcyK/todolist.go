@@ -136,15 +136,6 @@ func Login(ctx *gin.Context) {
 	ctx.Redirect(http.StatusFound, "/list")
 }
 
-func LoginCheck(ctx *gin.Context) {
-	if sessions.Default(ctx).Get(userkey) == nil {
-		ctx.Redirect(http.StatusFound, "/login")
-		ctx.Abort()
-	} else {
-		ctx.Next()
-	}
-}
-
 func Logout(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	session.Clear()
