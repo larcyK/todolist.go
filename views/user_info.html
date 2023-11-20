@@ -17,4 +17,5 @@
 <a href="/list"><button type="button">リストへ戻る</button></a>
 <a href="/user/edit/{{ .User.ID }}"><button type="button">編集</button></a>
 <button type="button" onclick="confirm_user_delete('{{ .User.ID }}', '{{ .User.Name }}')">削除</button>
+<a href="/logout"><button type="button">ログアウト</button></a>
 {{ template "footer" }}

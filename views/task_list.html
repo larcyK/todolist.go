@@ -26,7 +26,7 @@
         <td><a href="/task/{{ $task.ID }}">{{ $task.Title }}</a></td>
         {{ $threshold := 20 }}
         <td class="long-text" style="width: 30%">
-            {{ if gt (len $task.Detail) $threshold }}
+            {{ if ne ($task.Detail) (printf (printf "%%.%ds" $threshold) $task.Detail) }}
                 <details>
                     <summary>{{ printf (printf "%%.%ds..." $threshold) $task.Detail }}</summary>
                     <br>

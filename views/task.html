@@ -20,7 +20,5 @@
 </dl>
 <a href="/list"><button type="button">リストへ戻る</button></a>
 <a href="/task/edit/{{ .ID }}"><button type="button">編集</button></a>
-<form id="task_delete" action="/task/delete/{{ .ID }}" method="DELETE">
-    <button type="button" onclick="confirm_task_delete({{ .ID }}, {{ .Title }})">削除</button>
-</form>
+<button type="button" onclick="confirm_task_delete({{ .ID }}, {{ .Title }})">削除</button>
 {{ template "footer" }}

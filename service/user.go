@@ -95,7 +95,7 @@ func RegisterUser(ctx *gin.Context) {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
-	ctx.JSON(http.StatusOK, user)
+	ctx.HTML(http.StatusOK, "complete_new_user.html", gin.H{"Title": "Register user", "User": user})
 }
 
 func LoginForm(ctx *gin.Context) {
