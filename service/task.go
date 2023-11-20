@@ -69,23 +69,6 @@ func ShowTask(ctx *gin.Context) {
 		return
 	}
 
-	var owenership []database.Ownership
-	err = db.Select(&owenership, "SELECT * FROM ownership WHERE task_id=?", id)
-	if err != nil {
-		Error(http.StatusBadRequest, err.Error())(ctx)
-		return
-	}
-	if len(owenership) == 0 {
-		Error(http.StatusBadRequest, "No such task")(ctx)
-		return
-	}
-
-	userID := sessions.Default(ctx).Get("user")
-	if owenership[0].UserID != userID {
-		Error(http.StatusBadRequest, "You don't have permission to access this task")(ctx)
-		return
-	}
-
 	// Get task with given ID
 	var task database.Task
 	err = db.Get(&task, "SELECT * FROM tasks WHERE id=?", id)
@@ -126,7 +109,7 @@ func RegisterTask(ctx *gin.Context) {
 	// Register task
 	tx := db.MustBegin()
 	// Create new data with given title on DB
-	result, err := tx.Exec("INSERT INTO tasks (title, detail) VALUES (?)", title, detail)
+	result, err := tx.Exec("INSERT INTO tasks (title, detail) VALUES (?, ?)", title, detail)
 	if err != nil {
 		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
@@ -233,12 +216,21 @@ func DeleteTask(ctx *gin.Context) {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	tx := db.MustBegin()
 	// Delete the task from DB
 	_, err = db.Exec("DELETE FROM tasks WHERE id=?", id)
 	if err != nil {
+		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	_, err = db.Exec("DELETE FROM ownership WHERE task_id=?", id)
+	if err != nil {
+		tx.Rollback()
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	tx.Commit()
 	// Redirect to /list
 	ctx.Redirect(http.StatusFound, "/list")
 }

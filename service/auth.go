@@ -31,13 +31,14 @@ func OwnershipCheck(ctx *gin.Context) {
 		if err != nil {
 			Error(http.StatusInternalServerError, err.Error())(ctx)
 			ctx.Abort()
+		} else if len(ownership) == 0 {
+			Error(http.StatusNotFound, "No such task")(ctx)
+			ctx.Abort()
+		} else if ownership[0].UserID != userID {
+			Error(http.StatusForbidden, "You don't have permission to access this task")(ctx)
+			ctx.Abort()
 		} else {
-			if ownership[0].UserID != userID {
-				Error(http.StatusForbidden, "You don't have permission to access this task")(ctx)
-				ctx.Abort()
-			} else {
-				ctx.Next()
-			}
+			ctx.Next()
 		}
 	}
 }

@@ -45,13 +45,13 @@ func main() {
 	taskGroup := engine.Group("/task")
 	taskGroup.Use(service.LoginCheck)
 	{
-		taskGroup.GET("/:id", service.ShowTask) // ":id" is a parameter
+		taskGroup.GET("/:id", service.OwnershipCheck, service.ShowTask) // ":id" is a parameter
 		// タスクの新規登録
 		taskGroup.GET("/new", service.NewTaskForm)
 		taskGroup.POST("/new", service.RegisterTask)
 		// 既存タスクの編集
 		taskGroup.GET("/edit/:id", service.OwnershipCheck, service.EditTaskForm)
-		taskGroup.POST("/edit/:id", service.OwnershipCheck, service.NotImplemented)
+		taskGroup.POST("/edit/:id", service.OwnershipCheck, service.UpdateTask)
 		// 既存タスクの削除
 		taskGroup.GET("/delete/:id", service.OwnershipCheck, service.DeleteTask)
 	}
