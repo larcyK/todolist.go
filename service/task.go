@@ -22,7 +22,7 @@ func TaskList(ctx *gin.Context) {
 
 	// Get query parameter
 	kw := ctx.Query("kw")
-	dn := ctx.Query("dn") == "on"
+	dn := ctx.Query("dn")
 
 	// Get tasks in DB
 	var tasks []database.Task
@@ -31,8 +31,14 @@ func TaskList(ctx *gin.Context) {
 	if kw != "" {
 		conditions = append(conditions, fmt.Sprintf("title LIKE '%%%s%%'", kw))
 	}
-	if dn {
-		conditions = append(conditions, fmt.Sprintf("is_done=%t", !dn))
+	// if dn {
+	// 	conditions = append(conditions, fmt.Sprintf("is_done=%t", !dn))
+	// }
+	switch dn {
+	case "done":
+		conditions = append(conditions, fmt.Sprintf("is_done=%t", true))
+	case "not_done":
+		conditions = append(conditions, fmt.Sprintf("is_done=%t", false))
 	}
 	conditions = append(conditions, fmt.Sprintf("user_id=%d", userID))
 
