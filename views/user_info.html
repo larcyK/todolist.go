@@ -8,17 +8,22 @@
         <dd>{{ .User.ID }}</dd>
     </div>
     <div>
-        <dt>Name</dt>
+        <dt>ユーザー名</dt>
         <dd>{{ .User.Name }}</dd>
     </div>
     <div>
-        <dt>Created at</dt>
+        <dt>開設日時</dt>
         <dd>{{ .User.CreatedAt.Format "2006-01-02 15:04:05" }}</dd>
     </div>
 </dl>
-<a href="/list"><button type="button">リストへ戻る</button></a>
-<a href="/user/edit"><button type="button">編集</button></a>
-<a href="/user/password"><button type="button">パスワードの変更</button></a>
-<button type="button" onclick="confirm_user_delete('{{ .User.ID }}', '{{ .User.Name }}')">削除</button>
-<a href="/logout"><button type="button">ログアウト</button></a>
+<div class="button-container">
+    <button class="button-next" onclick="location.href='/user/edit'">ユーザー情報の編集</button>
+    <button class="button-next" onclick="location.href='/user/password'">パスワードの変更</button>
+    <button class="button-delete" onclick="confirm_user_delete('{{ .User.ID }}', '{{ .User.Name }}')">アカウント削除</button>
+</div>
+
+<div class="button-container">
+    <button class="button-back" onclick="location.href='/list'">リストへ戻る</button>
+    <button class="button-back" onclick="location.href='/logout'">ログアウト</button>
+</div>
 {{ template "footer" }}

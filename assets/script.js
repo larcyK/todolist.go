@@ -28,6 +28,16 @@ const confirm_user_delete = (id, name) => {
         });
     }
 }
+
+const submit_form = (id) => {
+    document.getElementById(id).submit();
+}
+
+const confirm_task_new = () => {
+    if(window.confirm(`新規タスクを追加します．よろしいですか？`)) {
+        document.getElementById('task_new').submit();
+    }
+}
  
 const confirm_task_update = (id, title) => {
     if(window.confirm(`Task ${id} ${title} を更新します．よろしいですか？`)) {

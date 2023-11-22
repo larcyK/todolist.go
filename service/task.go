@@ -85,7 +85,7 @@ func ShowTask(ctx *gin.Context) {
 
 	// Render task
 	// ctx.String(http.StatusOK, task.Title)  // Modify it!!
-	ctx.HTML(http.StatusOK, "task.html", task)
+	ctx.HTML(http.StatusOK, "task_info.html", task)
 }
 
 func NewTaskForm(ctx *gin.Context) {

@@ -1,12 +1,24 @@
 {{ template "header" . }}
-<h1>Login</h1>
+<h1 class="heading">
+    <span>ログイン</span>
+</h1>
 {{ if .Error }}
 <p><font color="#FF0000">{{ .Error }}</font></p>
 {{ end }}
-<form action="/login" method="POST">
-    <label>ユーザ名: </label><input type="text" name="username" value="{{ .Username }}" required><br>
-    <label>パスワード: </label><input type="password" name="password" required></br>
-    <input type="submit" value="ログイン">
+<form action="/login" method="POST" id="login" style="max-width: 450px;">
+    <dl class="info">
+        <div>
+            <dt><label>ユーザー名</label></dt>
+            <dd><input type="text" name="username" class="textbox" value="{{ .Username }}" placeholder="ユーザーID" required></dd>
+        </div>
+        <div>
+            <dt><label>パスワード</label></dt>
+            <dd><input type="password" name="password" class="textbox" value="{{ .Password }}" placeholder="パスワード" required></dd>
+        </div>
+    </dl>
+    <div class="button-container">
+        <button class="button-next" onclick="confirm_login('login')">ログイン</button>
+    </div>
 </form>
-<p><a href="/user/new">ユーザ登録</a></p>
+<a href="/user/new">新規登録</a>
 {{ template "footer" }}
