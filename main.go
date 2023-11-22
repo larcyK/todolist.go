@@ -64,7 +64,9 @@ func main() {
 		// ユーザ情報の編集
 		userGroup.GET("/edit", service.EditUserForm)
 		userGroup.POST("/edit", service.UpdateUser)
-		// userGroup.POST("/edit", service.UpdateUser)
+		// パスワードの変更
+		userGroup.GET("/password", service.EditPasswordForm)
+		userGroup.POST("/password", service.UpdatePassword)
 		// ユーザの削除
 		userGroup.DELETE("/delete", service.DeleteUser)
 	}

@@ -40,3 +40,9 @@ const confirm_user_update = () => {
         document.getElementById('user_update').submit();
     }
 }
+
+const confirm_password_update = () => {
+    if(window.confirm(`パスワードを更新します．よろしいですか？`)) {
+        document.getElementById('password_update').submit();
+    }
+}

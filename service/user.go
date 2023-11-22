@@ -3,9 +3,9 @@ package service
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"net/http"
 	"regexp"
-	"strconv"
 	"unicode/utf8"
 
 	"github.com/gin-contrib/sessions"
@@ -108,6 +108,7 @@ const userkey = "user"
 func Login(ctx *gin.Context) {
 	username := ctx.PostForm("username")
 	password := ctx.PostForm("password")
+	fmt.Println(username, password)
 
 	db, err := database.GetConnection()
 	if err != nil {
@@ -117,8 +118,8 @@ func Login(ctx *gin.Context) {
 
 	// ユーザの取得
 	var user database.User
-	err = db.Get(&user, "SELECT id, name, password FROM users WHERE name = ?", username)
-	if err != nil {
+	err = db.Get(&user, "SELECT * FROM users WHERE name = ?", username)
+	if err != nil || !user.Valid {
 		ctx.HTML(http.StatusBadRequest, "login.html", gin.H{"Title": "Login", "Username": username, "Error": "No such user"})
 		return
 	}
@@ -202,16 +203,7 @@ func UpdateUser(ctx *gin.Context) {
 		Error(http.StatusBadRequest, "No username is given")(ctx)
 		return
 	}
-	strID, exist := ctx.GetPostForm("id")
-	if !exist {
-		Error(http.StatusBadRequest, "No id is given")(ctx)
-		return
-	}
-	id, err := strconv.Atoi(strID)
-	if err != nil {
-		Error(http.StatusBadRequest, err.Error())(ctx)
-		return
-	}
+	userID := sessions.Default(ctx).Get(userkey)
 	db, err := database.GetConnection()
 	if err != nil {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
@@ -228,7 +220,7 @@ func UpdateUser(ctx *gin.Context) {
 		// create user structure
 		var user database.User
 		user.Name = username
-		user.ID = uint64(id)
+		user.ID = userID.(uint64)
 		ctx.HTML(http.StatusBadRequest, "form_edit_user.html", gin.H{"Title": "Edit user", "Error": "Username is already taken", "User": user})
 		return
 	}
@@ -242,6 +234,54 @@ func UpdateUser(ctx *gin.Context) {
 
 	// 保存状態の確認
 	_, err = result.RowsAffected()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	ctx.Redirect(http.StatusFound, "/user/info")
+}
+
+func EditPasswordForm(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "form_edit_password.html", gin.H{"Title": "Edit password"})
+}
+
+func UpdatePassword(ctx *gin.Context) {
+	userID := sessions.Default(ctx).Get(userkey)
+	currentPassword, exist := ctx.GetPostForm("current_password")
+	if !exist {
+		Error(http.StatusBadRequest, "No current password is given")(ctx)
+		return
+	}
+	newPassword, exist := ctx.GetPostForm("new_password")
+	if !exist {
+		Error(http.StatusBadRequest, "No new password is given")(ctx)
+		return
+	}
+	newPasswordConfirm, exist := ctx.GetPostForm("new_password_confirm")
+	if !exist {
+		Error(http.StatusBadRequest, "No new password is given")(ctx)
+		return
+	}
+	if newPassword != newPasswordConfirm {
+		Error(http.StatusBadRequest, "Password does not match")(ctx)
+		return
+	}
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	var user database.User
+	err = db.Get(&user, "SELECT * FROM users WHERE id = ?", userID)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	if hex.EncodeToString(user.Password) != hex.EncodeToString(hash(currentPassword)) {
+		Error(http.StatusBadRequest, "Incorrect password")(ctx)
+		return
+	}
+	_, err = db.Exec("UPDATE users SET password = ? WHERE id = ?", hash(newPassword), userID)
 	if err != nil {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
