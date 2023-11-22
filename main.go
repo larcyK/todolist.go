@@ -52,6 +52,9 @@ func main() {
 		// 既存タスクの編集
 		taskGroup.GET("/edit/:id", service.OwnershipCheck, service.EditTaskForm)
 		taskGroup.POST("/edit/:id", service.OwnershipCheck, service.UpdateTask)
+		// タスクの共有
+		taskGroup.GET("/share/:id", service.OwnershipCheck, service.ShareTaskForm)
+		taskGroup.POST("/share/:id", service.OwnershipCheck, service.ShareTask)
 		// 既存タスクの削除
 		taskGroup.DELETE("/delete/:id", service.OwnershipCheck, service.DeleteTask)
 	}

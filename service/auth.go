@@ -50,15 +50,13 @@ func OwnershipCheck(ctx *gin.Context) {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		ctx.Abort()
 	} else {
-		var ownership []database.Ownership
-		err = db.Select(&ownership, "SELECT * FROM ownership WHERE task_id = ?", taskID)
+		var ownership database.Ownership
+		// Get (User_id, Task_id) from ownership table
+		err = db.Get(&ownership, "SELECT * FROM ownership WHERE task_id = ? AND user_id = ?", taskID, userID)
 		if err != nil {
 			Error(http.StatusInternalServerError, err.Error())(ctx)
 			ctx.Abort()
-		} else if len(ownership) == 0 {
-			Error(http.StatusNotFound, "No such task")(ctx)
-			ctx.Abort()
-		} else if ownership[0].UserID != userID {
+		} else if ownership.UserID != userID {
 			Error(http.StatusForbidden, "You don't have permission to access this task")(ctx)
 			ctx.Abort()
 		} else {

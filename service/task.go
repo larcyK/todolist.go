@@ -240,3 +240,56 @@ func DeleteTask(ctx *gin.Context) {
 	// Redirect to /list
 	// ctx.Redirect(http.StatusFound, "/list")
 }
+
+func ShareTaskForm(ctx *gin.Context) {
+	// ID の取得
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
+	// Render edit form
+	ctx.HTML(http.StatusOK, "form_share_task.html", gin.H{"Title": fmt.Sprintf("Share task %d", id), "TaskID": id})
+}
+
+func ShareTask(ctx *gin.Context) {
+	// ID の取得
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
+	// Get user ID
+	shareUserID, exist := ctx.GetPostForm("user_id")
+	if !exist {
+		Error(http.StatusBadRequest, "No user ID is given")(ctx)
+		return
+	}
+	myUserID := sessions.Default(ctx).Get("user")
+	if myUserID == shareUserID {
+		Error(http.StatusBadRequest, "You can't share your task to yourself")(ctx)
+		return
+	}
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	// Check if the user exists
+	var user database.User
+	err = db.Get(&user, "SELECT * FROM users WHERE id=?", shareUserID)
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
+	// Register task
+	_, err = db.Exec("INSERT INTO ownership (user_id, task_id) VALUES (?, ?)", shareUserID, id)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	// Render status
+	path := fmt.Sprintf("/task/%d", id)
+	ctx.Redirect(http.StatusFound, path)
+}

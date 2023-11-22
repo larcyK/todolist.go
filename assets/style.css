@@ -3,6 +3,10 @@
     --theme-hover-background-color: #d4f0fd;
     --theme-hover-color: #1579c0;
     --theme-border-color: #e6edf3;
+    --theme-delete: #d32f2f;
+    --theme-delete-hover: #ef5350;
+    --theme-share: #388e3c;
+    --theme-share-hover: #66bb6a;
 }
 
 table {
@@ -284,11 +288,11 @@ table td.long-text {
 }
 
 /* nextボタン */
-.button-next, .button-back, .button-delete {
+.button-next, .button-back, .button-delete, .button-share {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    margin:0 auto;
+    margin: 7px 7px;
     padding: .9em 2em;
     border: none;
     border-radius: 25px;
@@ -297,6 +301,25 @@ table td.long-text {
     font-size: 1em;
 }
 
+/* shareボタン */
+.button-share {
+    min-width: 150px;
+    background-color: var(--theme-share);
+}
+
+.button-share::after {
+    width: .9em;
+    height: .9em;
+    margin-left: 10px;
+    background: url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23fff%22%3E%3Cpath%20d%3D%22M20.2%2015h-1.5c-.4%200-.8.3-.8.8V21H3V6h6.8c.4%200%20.8-.3.8-.8V3.8c0-.4-.3-.8-.8-.8H2.2C1%203%200%204%200%205.2v16.5C0%2023%201%2024%202.2%2024h16.5c1.2%200%202.2-1%202.2-2.2v-6c.1-.5-.2-.8-.7-.8zm2.7-15h-6c-1%200-1.5%201.2-.8%201.9l1.7%201.7L6.3%2015c-.4.4-.4%201.2%200%201.6l1.1%201.1c.4.4%201.2.4%201.6%200L20.4%206.2l1.7%201.7c.7.7%201.9.2%201.9-.8v-6c0-.6-.5-1.1-1.1-1.1z%22%2F%3E%3C%2Fsvg%3E') no-repeat center;
+    content: '';
+}
+
+.button-share:hover {
+    background-color: var(--theme-share-hover);
+}
+
+/* nextボタン */
 .button-next{
     min-width: 250px;
     background-color: var(--theme-color);
@@ -316,10 +339,10 @@ table td.long-text {
     background-color: var(--theme-hover-color);
 }
 
-
+/* deleteボタン */
 .button-delete {
     min-width: 150px;
-    background-color: #d30000;
+    background-color: var(--theme-delete);
 }
 
 .button-delete::after {
@@ -329,7 +352,7 @@ table td.long-text {
 }
 
 .button-delete:hover {
-    background-color: #ff0000;
+    background-color: var(--theme-delete-hover);
 }
 
 
@@ -350,13 +373,7 @@ table td.long-text {
     align-items: center;
 }
 
-.button-next,
-.button-back,
-.button-delete {
-    margin: 0 7px; /* Adjust as needed */
-}
-
-
+/* トグルボタン */
 .toggle-button {
     display: flex;
     align-items: center;
