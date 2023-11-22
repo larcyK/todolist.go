@@ -34,3 +34,9 @@ const confirm_task_update = (id, title) => {
         document.getElementById('task_update').submit();
     }
 }
+
+const confirm_user_update = () => {
+    if(window.confirm(`ユーザー情報を更新します．よろしいですか？`)) {
+        document.getElementById('user_update').submit();
+    }
+}

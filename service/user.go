@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"net/http"
 	"regexp"
+	"strconv"
 	"unicode/utf8"
 
 	"github.com/gin-contrib/sessions"
@@ -177,4 +178,73 @@ func DeleteUser(ctx *gin.Context) {
 	session.Options(sessions.Options{MaxAge: -1})
 	session.Save()
 	// ctx.Redirect(http.StatusFound, "/")
+}
+
+func EditUserForm(ctx *gin.Context) {
+	userID := sessions.Default(ctx).Get(userkey)
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	var user database.User
+	err = db.Get(&user, "SELECT * FROM users WHERE id = ?", userID)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	ctx.HTML(http.StatusOK, "form_edit_user.html", gin.H{"Title": "Edit user", "User": user})
+}
+
+func UpdateUser(ctx *gin.Context) {
+	username, exist := ctx.GetPostForm("username")
+	if !exist {
+		Error(http.StatusBadRequest, "No username is given")(ctx)
+		return
+	}
+	strID, exist := ctx.GetPostForm("id")
+	if !exist {
+		Error(http.StatusBadRequest, "No id is given")(ctx)
+		return
+	}
+	id, err := strconv.Atoi(strID)
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	// 重複チェック
+	var duplicate int
+	err = db.Get(&duplicate, "SELECT COUNT(*) FROM users WHERE name=?", username)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	if duplicate > 0 {
+		// create user structure
+		var user database.User
+		user.Name = username
+		user.ID = uint64(id)
+		ctx.HTML(http.StatusBadRequest, "form_edit_user.html", gin.H{"Title": "Edit user", "Error": "Username is already taken", "User": user})
+		return
+	}
+
+	// DB への保存
+	result, err := db.Exec("UPDATE users SET name = ? WHERE id = ?", username, sessions.Default(ctx).Get(userkey))
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+
+	// 保存状態の確認
+	_, err = result.RowsAffected()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	ctx.Redirect(http.StatusFound, "/user/info")
 }
