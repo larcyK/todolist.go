@@ -284,19 +284,22 @@ table td.long-text {
 }
 
 /* nextボタン */
-.button-next {
+.button-next, .button-back, .button-delete {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 250px;
     margin:0 auto;
     padding: .9em 2em;
     border: none;
     border-radius: 25px;
-    background-color: var(--theme-color);
     color: #fff;
     font-weight: 600;
     font-size: 1em;
+}
+
+.button-next{
+    min-width: 250px;
+    background-color: var(--theme-color);
 }
 
 .button-next::after {
@@ -313,25 +316,33 @@ table td.long-text {
     background-color: var(--theme-hover-color);
 }
 
+
+.button-delete {
+    min-width: 150px;
+    background-color: #d30000;
+}
+
+.button-delete::after {
+    content: '✕';
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+.button-delete:hover {
+    background-color: #ff0000;
+}
+
+
 /* backボタン */
 .button-back {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 120px;
-    margin:0 auto;
-    padding: .9em 2em;
-    border: none;
-    border-radius: 25px;
+    min-width: 120px;
     background-color: #999;
-    color: #fff;
-    font-weight: 600;
-    font-size: 1em;
 }
 
 .button-back:hover {
     background-color: #666;
 }
+
 
 .button-container {
     display: flex;
@@ -340,8 +351,9 @@ table td.long-text {
 }
 
 .button-next,
-.button-back {
-    margin: 0 10px; /* Adjust as needed */
+.button-back,
+.button-delete {
+    margin: 0 7px; /* Adjust as needed */
 }
 
 
