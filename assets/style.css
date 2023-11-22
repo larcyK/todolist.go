@@ -1,5 +1,6 @@
 :root {
     --theme-color: #2589d0;
+    --theme-hover-color: #1579c0;
 }
 
 table {
@@ -47,6 +48,19 @@ table td.long-text {
     word-break: normal;
 }
 
+.radius-table{
+    border-radius: 20px;
+}
+
+.radius-table tr:first-child>*:first-child{
+    border-radius: 20px 0 0 0;
+}
+
+.radius-table tr:first-child>*:last-child{
+    border-radius: 0 20px 0 0;
+}
+
+/* 説明 */
 .info div {
     display:flex;
     justify-content: flex-start;
@@ -180,14 +194,14 @@ table td.long-text {
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 250px;
+    min-width: 250px;
     /* margin: 0 auto; */
     padding: .9em 3.2em .9em 2em;
     border: none;
     border-radius: 25px;
     background-color: var(--theme-color);
     background-image: url(data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2028%2028%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2214%22%20cy%3D%2214%22%20r%3D%2214%22%20style%3D%22fill%3A%23fff%3B%22%2F%3E%0A%3C%2Fsvg%3E);
-    background-position: right 3em center;
+    background-position: right 1.6em center;
     background-size: 1.2em;
     background-repeat: no-repeat;
     color: #fff;
@@ -199,13 +213,13 @@ table td.long-text {
 }
 
 .button-new:hover {
-    background-color: #1579c0;
+    background-color: var(--theme-hover-color);
 }
 
 .button-new::before,
 .button-new::after {
     position: absolute;
-    right: calc(3.6em - 1.5px);
+    right: calc(2.2em - 1.5px);
     width: 3px;
     height: 10px;
     border-radius: 1px;

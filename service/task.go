@@ -29,7 +29,7 @@ func TaskList(ctx *gin.Context) {
 
 	var conditions []string
 	if kw != "" {
-		conditions = append(conditions, fmt.Sprintf("title LIKE '%%%s%%'", kw))
+		conditions = append(conditions, fmt.Sprintf("title LIKE '%%%s%%' OR detail LIKE '%%%s%%'", kw, kw))
 	}
 	// if dn {
 	// 	conditions = append(conditions, fmt.Sprintf("is_done=%t", !dn))
