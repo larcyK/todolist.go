@@ -1,6 +1,8 @@
 :root {
     --theme-color: #2589d0;
+    --theme-hover-background-color: #d4f0fd;
     --theme-hover-color: #1579c0;
+    --theme-border-color: #e6edf3;
 }
 
 table {
@@ -16,12 +18,12 @@ table {
 }
 
 table tr{
-    border-bottom: solid 1px #eee;
+    border-bottom: solid 1px var(--theme-border-color);
     cursor: pointer;
 }
 
 table tr:hover{
-    background-color: #d4f0fd;
+    background-color: var(--theme-hover-background-color);
 }
 
 table th{
@@ -65,11 +67,13 @@ table td.long-text {
     display:flex;
     justify-content: flex-start;
     padding: 6px;
-    border-bottom: 1px dotted #c7c7c7;
+    border-bottom: 1px solid var(--theme-border-color);
 }
 
 .info dt {
-    width: 120px;   
+    width: 150px;   
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .info dd {
@@ -80,6 +84,10 @@ table td.long-text {
 .info dt, .info dd {
     padding: 6px;
 }
+
+/* .info div:hover {
+    background-color: var(--theme-hover-background-color);
+} */
 
 
 /* 選択ボックス */
@@ -233,7 +241,7 @@ table td.long-text {
 
 /* タイトル */
 .heading {
-    border-bottom: 3px solid #e6edf3;
+    border-bottom: 3px solid var(--theme-border-color); 
 }
 
 .heading span {
@@ -251,4 +259,141 @@ table td.long-text {
     height: 3px;
     background-color: #2589d0;
     content: '';
+}
+
+/* テキストボックス，テキストエリア */
+.textbox, .textarea {
+    min-width: 250px;
+    width: 100%;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    margin: 5px auto;
+    border: 1px solid var(--theme-color);
+    border-radius: 25px;
+    color: #333;
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+.textbox::placeholder, .textarea::placeholder {
+    color: #999;
+}
+
+.textarea {
+    min-height: 100px;
+}
+
+/* nextボタン */
+.button-next {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    margin:0 auto;
+    padding: .9em 2em;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--theme-color);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1em;
+}
+
+.button-next::after {
+    transform: rotate(45deg);
+    width: 5px;
+    height: 5px;
+    margin-left: 10px;
+    border-top: 2px solid #fff;
+    border-right: 2px solid #fff;
+    content: '';
+}
+
+.button-next:hover {
+    background-color: var(--theme-hover-color);
+}
+
+/* backボタン */
+.button-back {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    margin:0 auto;
+    padding: .9em 2em;
+    border: none;
+    border-radius: 25px;
+    background-color: #999;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1em;
+}
+
+.button-back:hover {
+    background-color: #666;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-next,
+.button-back {
+    margin: 0 10px; /* Adjust as needed */
+}
+
+
+.toggle-button {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100px;
+    height: 50px;
+    border-radius: 50px;
+    box-sizing: content-box;
+    background-color: #ff8d8d33;
+    cursor: pointer;
+    transition: background-color .4s;
+}
+
+.toggle-button:has(:checked) {
+    background-color: #75bbff33;
+}
+
+.toggle-button::before {
+    position: absolute;
+    left: 5px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #ff8d8d;
+    content: '';
+    transition: left .4s;
+}
+
+.toggle-button:has(:checked)::before {
+    left: 50px;
+    background-color: #75bbff;
+}
+
+.toggle-button::after {
+    position: absolute;
+    left: 26px;
+    transform: translateX(-50%);
+    color: #fff;
+    font-weight: 600;
+    font-size: .9em;
+    content: '未';
+    transition: left .4s;
+}
+
+.toggle-button:has(:checked)::after {
+    left: 71px;
+    content: '済';
+}
+
+.toggle-button input {
+    display: none;
 }

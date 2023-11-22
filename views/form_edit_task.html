@@ -1,15 +1,37 @@
 {{ template "header" . }}
-<h1>Task {{ .Task.ID }}: edit</h1>
+<h1 class="heading">
+    <span>タスクの編集</span>
+</h1>
 <form id="task_update" action="/task/edit/{{ .Task.ID }}" method="POST">
-    <label>Title</label><input type="text" name="title" value="{{ .Task.Title }}" required>
-    <br>
-    <label>Detail</label>
-    <textarea name="detail">{{ .Task.Detail }}</textarea>
-    <br>
-    <input type="radio" name="is_done" value="t" {{ if .Task.IsDone }}checked{{ end }}><label>完了</label>
-    <input type="radio" name="is_done" value="f" {{ if not .Task.IsDone }}checked{{ end }}><label>未完了</label>
+    <dl class="info">
+        <!-- <div>
+            <dt>Created at</dt>
+            <dd>{{ .Task.CreatedAt.Format "2006-01-02 15:04:05" }}</dd>
+        </div> -->
+        <div>
+            <dt><label>タイトル</label></dt>
+            <dd><input type="text" name="title" class="textbox" value="{{ .Task.Title }}" placeholder="タイトル名" required></dd>
+        </div>
+        <div>
+            <dt><label>説明</label></dt>
+            <dd><textarea class="textarea" name="detail" placeholder="説明">{{ .Task.Detail }}</textarea></dd>
+        </div>
+        <div>
+            <dt><label>状態</label></dt>
+            <dd>
+                <label class="toggle-button">
+                    <input type="checkbox" name="is_done" value="t" {{ if .Task.IsDone }}checked{{ end }}>
+                    <input type="hidden" name="is_done" value="f">
+                </label>
+            </dd>
+            <!-- <input type="radio" name="is_done" value="t" {{ if .Task.IsDone }}checked{{ end }}><label>完了</label>
+            <input type="radio" name="is_done" value="f" {{ if not .Task.IsDone }}checked{{ end }}><label>未完了</label> -->
+        </div>
+    </dl>
     </br>
-    <button type="button" onclick="confirm_task_update({{ .Task.ID }}, {{ .Task.Title }})">更新</button>
-    <a href="/task/{{ .Task.ID }}"><button type="button">戻る</button></a>
+    <div class="button-container">
+        <button class="button-next" onclick="confirm_task_update('{{ .Task.ID }}', '{{ .Task.Title }}')">更新</button>
+        <button class="button-back" onclick="location.href='/task/{{ .Task.ID }}'">戻る</button>
+    </div>
 </form>
 {{ template "footer" }}

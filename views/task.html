@@ -1,20 +1,26 @@
 {{ template "header" . }}
-<h1>Task {{ .ID }}</h1>
+<h1 class="heading">
+    <span>タスク詳細</span>
+</h1>
 <dl class="info">
     <div>
-        <dt>Title</dt>
+        <dt>ID</dt>
+        <dd>{{ .ID }}</dd>
+    </div>
+    <div>
+        <dt>タイトル</dt>
         <dd>{{ .Title }}</dd>
     </div>
     <div>
-        <dt>Created at</dt>
+        <dt>作成日時</dt>
         <dd>{{ .CreatedAt.Format "2006-01-02 15:04:05" }}</dd>
     </div>
     <div>
-        <dt>Detail</dt>
+        <dt>説明</dt>
         <dd>{{ .Detail }}</dd>
     </div>
     <div>
-        <dt>Status</dt>
+        <dt>状態</dt>
         <dd><input type="checkbox" {{ if .IsDone }}checked {{ end }}disabled/>済</dd>
     </div>
 </dl>
