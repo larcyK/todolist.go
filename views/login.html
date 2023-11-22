@@ -2,10 +2,8 @@
 <h1 class="heading">
     <span>ログイン</span>
 </h1>
-{{ if .Error }}
-<p><font color="#FF0000">{{ .Error }}</font></p>
-{{ end }}
 <form action="/login" method="POST" id="login" style="max-width: 450px;">
+    {{ template "error" . }}
     <dl class="info">
         <div>
             <dt><label>ユーザー名</label></dt>
