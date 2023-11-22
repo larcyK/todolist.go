@@ -17,13 +17,13 @@
     </div>
 </dl>
 <div class="button-container">
-    <button class="button-next" onclick="location.href='/user/edit'">ユーザー情報の編集</button>
-    <button class="button-next" onclick="location.href='/user/password'">パスワードの変更</button>
-    <button class="button-delete" onclick="confirm_user_delete('{{ .User.ID }}', '{{ .User.Name }}')">アカウント削除</button>
+    <button type="button" class="button-next" onclick="location.href='/user/edit'">ユーザー情報の編集</button>
+    <button type="button" class="button-next" onclick="location.href='/user/password'">パスワードの変更</button>
+    <button type="button" class="button-delete" onclick="confirm_user_delete('{{ .User.ID }}', '{{ .User.Name }}')">アカウント削除</button>
 </div>
 
 <div class="button-container">
-    <button class="button-back" onclick="location.href='/list'">リストへ戻る</button>
-    <button class="button-back" onclick="location.href='/logout'">ログアウト</button>
+    <button type="button" class="button-back" onclick="location.href='/list'">リストへ戻る</button>
+    <button type="button" class="button-back" onclick="location.href='/logout'">ログアウト</button>
 </div>
 {{ template "footer" }}

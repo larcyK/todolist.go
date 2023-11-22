@@ -29,11 +29,11 @@
     </div>
 </dl>
 <div class="button-container">
-    <button class="button-share" onclick="location.href='/task/share/{{ .ID }}'">共有</button>
-    <button class="button-next" onclick="location.href='/task/edit/{{ .ID }}'">編集</button>
-    <button class="button-delete" onclick="confirm_task_delete('{{ .ID }}', '{{ .Title }}')">削除</button>
+    <button type="button" class="button-share" onclick="location.href='/task/share/{{ .ID }}'">共有</button>
+    <button type="button" class="button-next" onclick="location.href='/task/edit/{{ .ID }}'">編集</button>
+    <button type="button" class="button-delete" onclick="confirm_task_delete('{{ .ID }}', '{{ .Title }}')">削除</button>
 </div>
 <div class="button-container">
-    <button class="button-back" onclick="location.href='/list'">リストへ戻る</button>
+    <button type="button" class="button-back" onclick="location.href='/list'">リストへ戻る</button>
 </div>
 {{ template "footer" }}

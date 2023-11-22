@@ -30,8 +30,8 @@
     </dl>
     </br>
     <div class="button-container">
-        <button class="button-next" onclick="confirm_task_update('{{ .Task.ID }}', '{{ .Task.Title }}')">更新</button>
-        <button class="button-back" onclick="location.href='/task/{{ .Task.ID }}'">戻る</button>
+        <button type="button" class="button-next" onclick="confirm_task_update('{{ .Task.ID }}', '{{ .Task.Title }}')">更新</button>
+        <button type="button" class="button-back" onclick="location.href='/task/{{ .Task.ID }}'">戻る</button>
     </div>
 </form>
 {{ template "footer" }}
