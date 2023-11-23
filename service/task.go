@@ -138,7 +138,6 @@ func RegisterTask(ctx *gin.Context) {
 }
 
 func EditTaskForm(ctx *gin.Context) {
-	// ID の取得
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		Error(http.StatusBadRequest, err.Error())(ctx)
@@ -242,18 +241,29 @@ func DeleteTask(ctx *gin.Context) {
 }
 
 func ShareTaskForm(ctx *gin.Context) {
-	// ID の取得
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		Error(http.StatusBadRequest, err.Error())(ctx)
 		return
 	}
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	// Get target task
+	var task database.Task
+	err = db.Get(&task, "SELECT * FROM tasks WHERE id=?", id)
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
 	// Render edit form
-	ctx.HTML(http.StatusOK, "form_share_task.html", gin.H{"Title": fmt.Sprintf("Share task %d", id), "TaskID": id})
+	ctx.HTML(http.StatusOK, "form_share_task.html", gin.H{"Title": fmt.Sprintf("Share task %d", id), "Task": task})
 }
 
 func ShareTask(ctx *gin.Context) {
-	// ID の取得
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		Error(http.StatusBadRequest, err.Error())(ctx)

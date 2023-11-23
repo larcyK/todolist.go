@@ -1,9 +1,21 @@
 {{ template "header" . }}
-<h1>タスクの共有</h1>
-<form action="/task/share/{{ .TaskID }}" method="POST">
-    <label>共有先ユーザーID</label><input type="text" name="user_id" required>
-    <br>
-    <input type="submit" value="共有">
-    <a href="/list"><button type="button">戻る</button></a>
+<h1 class="heading">
+    <span>タスクの共有</span>
+</h1>
+<form action="/task/share/{{ .Task.ID }}" method="POST", style="max-width: 450px;">
+    <dl class="info">
+        <div>
+            <dt><label>タイトル</label></dt>
+            <dd>{{ .Task.Title }}</dd>
+        </div>
+        <div>
+            <dt><label>共有先ユーザーID</label></dt>
+            <dd><input type="text" name="user_id" class="textbox" placeholder="共有先ユーザーID" required></dd>
+        </div>
+    </dl>
+    <div class="button-container">
+        <button class="button-share">共有</button>
+        <button type="button" class="button-back" onclick="location.href='/list'">戻る</button>
+    </div>
 </form>
 {{ template "footer" }}
