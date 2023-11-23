@@ -83,9 +83,17 @@ func ShowTask(ctx *gin.Context) {
 		return
 	}
 
+	// Get ownerships in given task
+	var userNames []string
+	err = db.Select(&userNames, "SELECT name FROM users INNER JOIN ownership ON user_id = id WHERE task_id=?", id)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+
 	// Render task
 	// ctx.String(http.StatusOK, task.Title)  // Modify it!!
-	ctx.HTML(http.StatusOK, "task_info.html", task)
+	ctx.HTML(http.StatusOK, "task_info.html", gin.H{"Title": task.Title, "Task": task, "Owners": userNames})
 }
 
 func NewTaskForm(ctx *gin.Context) {

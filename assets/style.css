@@ -432,3 +432,44 @@ table td.long-text {
     padding: 0 0 0 .7em;
     border-left: 1px solid #f06060;
 }
+
+.simple-list li::marker {
+    color: var(--theme-color);
+    font-size: 1.1em;
+}
+
+
+.jump-list {
+    list-style-type: none;
+}
+
+.jump-list li {
+    display: flex;
+    align-items: center;
+    gap: 0 10px;
+    position: relative;
+    padding: .3em .3em .3em 1.5em;
+}
+
+.jump-list li::before,
+.jump-list li::after {
+    position: absolute;
+    content: '';
+}
+
+.jump-list li::before {
+    left: 0;
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 50%;
+    background-color: var(--theme-color);
+}
+
+.jump-list li::after {
+    left: .6em;
+    transform: translateX(-75%) rotate(-45deg);
+    width: .3em;
+    height: .3em;
+    border-bottom: 2px solid #fff;
+    border-right: 2px solid #fff;
+}

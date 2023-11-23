@@ -5,33 +5,47 @@
 <dl class="info">
     <div>
         <dt>ID</dt>
-        <dd>{{ .ID }}</dd>
+        <dd>{{ .Task.ID }}</dd>
     </div>
     <div>
         <dt>タイトル</dt>
-        <dd>{{ .Title }}</dd>
+        <dd>{{ .Task.Title }}</dd>
     </div>
     <div>
         <dt>作成日時</dt>
-        <dd>{{ .CreatedAt.Format "2006-01-02 15:04:05" }}</dd>
+        <dd>{{ .Task.CreatedAt.Format "2006-01-02 15:04:05" }}</dd>
     </div>
     <div>
         <dt>説明</dt>
-        <dd>{{ .Detail }}</dd>
+        <dd>{{ .Task.Detail }}</dd>
     </div>
     <div>
         <dt>状態</dt>
         <dd>
             <label class="toggle-button">
-                <input type="checkbox" class="toggle-button" {{ if .IsDone }}checked {{ end }} disabled/>
+                <input type="checkbox" class="toggle-button" {{ if .Task.IsDone }}checked {{ end }} disabled/>
             </label>
+        </dd>
+    </div>
+    <div>
+        <dt>共有先ユーザー</dt>
+        <dd>
+            {{ if .Owners }}
+                <ul class="simple-list">
+                    {{ range $Owner := .Owners }}
+                        <li>{{ $Owner }}</li>
+                    {{ end }}
+                </ul>
+            {{ else }}
+                なし
+            {{ end }}
         </dd>
     </div>
 </dl>
 <div class="button-container">
-    <button type="button" class="button-share" onclick="location.href='/task/share/{{ .ID }}'">共有</button>
-    <button type="button" class="button-next" onclick="location.href='/task/edit/{{ .ID }}'">編集</button>
-    <button type="button" class="button-delete" onclick="confirm_task_delete('{{ .ID }}', '{{ .Title }}')">削除</button>
+    <button type="button" class="button-share" onclick="location.href='/task/share/{{ .Task.ID }}'">共有</button>
+    <button type="button" class="button-next" onclick="location.href='/task/edit/{{ .Task.ID }}'">編集</button>
+    <button type="button" class="button-delete" onclick="confirm_task_delete('{{ .Task.ID }}', '{{ .Task.Title }}')">削除</button>
 </div>
 <div class="button-container">
     <button type="button" class="button-back" onclick="location.href='/list'">リストへ戻る</button>
