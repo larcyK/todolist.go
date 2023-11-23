@@ -269,7 +269,11 @@ func UpdatePassword(ctx *gin.Context) {
 		return
 	}
 	if newPassword != newPasswordConfirm {
-		Error(http.StatusBadRequest, "Password does not match")(ctx)
+		ctx.HTML(http.StatusBadRequest, "form_edit_password.html", gin.H{"Title": "Edit password", "Error": "New password does not match"})
+		return
+	}
+	if !isValidPassword(newPassword) {
+		ctx.HTML(http.StatusBadRequest, "form_edit_password.html", gin.H{"Title": "Edit password", "Error": "New password is too simple"})
 		return
 	}
 	db, err := database.GetConnection()
@@ -284,7 +288,7 @@ func UpdatePassword(ctx *gin.Context) {
 		return
 	}
 	if hex.EncodeToString(user.Password) != hex.EncodeToString(hash(currentPassword)) {
-		Error(http.StatusBadRequest, "Incorrect password")(ctx)
+		ctx.HTML(http.StatusBadRequest, "form_edit_password.html", gin.H{"Title": "Edit password", "Error": "Incorrect current password"})
 		return
 	}
 	tx := db.MustBegin()

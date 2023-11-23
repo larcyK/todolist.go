@@ -5,13 +5,9 @@
 <br>
 <form action="/list" method="GET">
     <label class="search-form">
-        <!-- <label> -->
-            <input type="text" placeholder="タイトル / 説明 を検索" name="kw" value="{{ .Kw }}">
-        <!-- </label> -->
+        <input type="text" placeholder="タイトル / 説明 を検索" name="kw" value="{{ .Kw }}">
         <button type="submit" aria-label="検索"></button>
     </label>
-    <!-- <input type="checkbox" name="dn" {{ if .Dn }}checked{{ end }} onchange="this.form.submit()"> -->
-    <!-- <label>未完了のタスクのみ表示</label> -->
     <label class="select-box">
         <select name="dn" onchange="this.form.submit()">
             <option value="all" {{ if eq .Dn "all" }}selected{{ end }}>全てのタスク</option>
@@ -38,7 +34,7 @@
     <tr>
         <td>{{ $task.ID }}</td>
         <td style="width: 20%;">{{ $task.CreatedAt.Format "2006-01-02 15:04:05" }}</td>
-        <td style="width: 35%;"><a href="/task/{{ $task.ID }}">{{ $task.Title }}</a></td>
+        <td style="width: 35%;"><a href="/task/{{ $task.ID }}"><b>{{ $task.Title }}</b></a></td>
         {{ $threshold := 20 }}
         <td class="long-text" style="width: 30%; font-size: smaller;">
             {{ if ne ($task.Detail) (printf (printf "%%.%ds" $threshold) $task.Detail) }}
