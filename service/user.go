@@ -169,11 +169,14 @@ func DeleteUser(ctx *gin.Context) {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	tx := db.MustBegin()
 	_, err = db.Exec("UPDATE users SET valid = false WHERE id = ?", userID)
 	if err != nil {
+		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	tx.Commit()
 	session := sessions.Default(ctx)
 	session.Clear()
 	session.Options(sessions.Options{MaxAge: -1})
@@ -226,11 +229,14 @@ func UpdateUser(ctx *gin.Context) {
 	}
 
 	// DB への保存
+	tx := db.MustBegin()
 	result, err := db.Exec("UPDATE users SET name = ? WHERE id = ?", username, sessions.Default(ctx).Get(userkey))
 	if err != nil {
+		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	tx.Commit()
 
 	// 保存状態の確認
 	_, err = result.RowsAffected()
@@ -281,10 +287,13 @@ func UpdatePassword(ctx *gin.Context) {
 		Error(http.StatusBadRequest, "Incorrect password")(ctx)
 		return
 	}
+	tx := db.MustBegin()
 	_, err = db.Exec("UPDATE users SET password = ? WHERE id = ?", hash(newPassword), userID)
 	if err != nil {
+		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	tx.Commit()
 	ctx.Redirect(http.StatusFound, "/user/info")
 }

@@ -236,11 +236,14 @@ func UpdateTask(ctx *gin.Context) {
 		return
 	}
 	// Update task
+	tx := db.MustBegin()
 	_, err = db.Exec("UPDATE tasks SET title=?, detail=?, is_done=? WHERE id=?", title, detail, isDone, id)
 	if err != nil {
+		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	tx.Commit()
 	// Render status
 	path := fmt.Sprintf("/task/%d", id)
 	ctx.Redirect(http.StatusFound, path)
