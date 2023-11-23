@@ -115,7 +115,7 @@ func ShowTask(ctx *gin.Context) {
 
 	// Get ownerships in given task
 	var userNames []string
-	err = db.Select(&userNames, "SELECT name FROM users INNER JOIN ownership ON user_id = id WHERE task_id=?", id)
+	err = db.Select(&userNames, "SELECT name FROM users INNER JOIN ownership ON user_id = id WHERE task_id=? AND valid=1", id)
 	if err != nil {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
