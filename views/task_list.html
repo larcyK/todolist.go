@@ -58,7 +58,7 @@
 {{ end }}
 <ol class="pagination">
     <!-- <li class="prev"><a href="#"><</a></li> -->
-    {{ range $page := .PageIndex }}
+    {{ range $page := one_until .TotalPage }}
     <li {{ if eq $page $.Page }}class="current"{{ end }}>
         <a href="/list?kw={{ $.Kw }}&dn={{ $.Dn }}&page={{ $page }}">{{ $page }}</a>
     </li>

@@ -72,10 +72,6 @@ func TaskList(ctx *gin.Context) {
 	startTask := min(len(tasks), offset)
 	endTask := min(len(tasks), startTask+perPage)
 	TotalPage := (len(tasks)-1)/perPage + 1
-	PageIndex := make([]int, TotalPage)
-	for i := 0; i < TotalPage; i++ {
-		PageIndex[i] = i + 1
-	}
 
 	// Render tasks
 	ctx.HTML(http.StatusOK, "task_list.html", gin.H{
@@ -85,7 +81,7 @@ func TaskList(ctx *gin.Context) {
 		"Dn":        dn,
 		"User":      userID,
 		"Page":      page,
-		"PageIndex": PageIndex,
+		"TotalPage": TotalPage,
 	})
 }
 

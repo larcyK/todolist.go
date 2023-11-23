@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"os"
 
@@ -14,6 +15,18 @@ import (
 	"todolist.go/db"
 	"todolist.go/service"
 )
+
+func one_until(n int) []int {
+	a := make([]int, n)
+	for i := 0; i < n; i++ {
+		a[i] = i + 1
+	}
+	return a
+}
+
+func add(a, b int) int {
+	return a + b
+}
 
 const port = 8000
 
@@ -31,6 +44,11 @@ func main() {
 
 	// initialize Gin engine
 	engine := gin.Default()
+	engine.SetFuncMap(template.FuncMap{
+		"one_until": one_until,
+		"add":       add,
+	})
+
 	engine.LoadHTMLGlob("views/*.html")
 
 	// prepare session

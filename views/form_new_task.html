@@ -2,6 +2,7 @@
 <h1 class="heading">
     <span>タスクの新規登録</span>
 </h1>
+{{ template "error" . }}
 <form action="/task/new" id="task_new" method="POST">
     <dl class="info">
         <div>
