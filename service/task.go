@@ -10,6 +10,13 @@ import (
 	database "todolist.go/db"
 )
 
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 // TaskList renders list of tasks in DB
 func TaskList(ctx *gin.Context) {
 	userID := sessions.Default(ctx).Get("user")
@@ -24,6 +31,14 @@ func TaskList(ctx *gin.Context) {
 	kw := ctx.Query("kw")
 	dn := ctx.Query("dn")
 
+	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	perPage := 5
+	offset := (page - 1) * perPage
+
 	// Get tasks in DB
 	var tasks []database.Task
 
@@ -31,9 +46,6 @@ func TaskList(ctx *gin.Context) {
 	if kw != "" {
 		conditions = append(conditions, fmt.Sprintf("title LIKE '%%%s%%' OR detail LIKE '%%%s%%'", kw, kw))
 	}
-	// if dn {
-	// 	conditions = append(conditions, fmt.Sprintf("is_done=%t", !dn))
-	// }
 	switch dn {
 	case "done":
 		conditions = append(conditions, fmt.Sprintf("is_done=%t", true))
@@ -49,14 +61,32 @@ func TaskList(ctx *gin.Context) {
 			query += " AND " + c
 		}
 	}
+
+	// query += fmt.Sprintf(" LIMIT %d OFFSET %d", perPage, offset)
 	err = db.Select(&tasks, query)
 	if err != nil {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
 
+	startTask := min(len(tasks), offset)
+	endTask := min(len(tasks), offset+perPage)
+	TotalPage := (len(tasks)-1)/perPage + 1
+	PageIndex := make([]int, TotalPage)
+	for i := 0; i < TotalPage; i++ {
+		PageIndex[i] = i + 1
+	}
+
 	// Render tasks
-	ctx.HTML(http.StatusOK, "task_list.html", gin.H{"Title": "Task list", "Tasks": tasks, "Kw": kw, "Dn": dn, "User": userID})
+	ctx.HTML(http.StatusOK, "task_list.html", gin.H{
+		"Title":     "Task list",
+		"Tasks":     tasks[startTask:endTask],
+		"Kw":        kw,
+		"Dn":        dn,
+		"User":      userID,
+		"Page":      page,
+		"PageIndex": PageIndex,
+	})
 }
 
 // ShowTask renders a task with given ID

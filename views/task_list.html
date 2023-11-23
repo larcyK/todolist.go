@@ -56,6 +56,15 @@
     {{ end }}
 </table>
 {{ end }}
+<ol class="pagination">
+    <!-- <li class="prev"><a href="#"><</a></li> -->
+    {{ range $page := .PageIndex }}
+    <li {{ if eq $page $.Page }}class="current"{{ end }}>
+        <a href="/list?kw={{ $.Kw }}&dn={{ $.Dn }}&page={{ $page }}">{{ $page }}</a>
+    </li>
+    {{ end }}
+    <!-- <li class="next"><a href="#">></a></li> -->
+</ol>
 <a href="/user/info">ユーザ情報</a>
 <br>
 {{ template "footer" }}

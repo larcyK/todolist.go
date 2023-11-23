@@ -473,3 +473,33 @@ table td.long-text {
     border-bottom: 2px solid #fff;
     border-right: 2px solid #fff;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0 8px;
+    list-style-type: none;
+    padding: 0;
+}
+
+.pagination a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2em;
+    height: 2em;
+    border: 1px solid #2589d0;
+    border-radius: 1px;
+    color: #2589d0;
+}
+
+.pagination a:not(:hover) {
+    text-decoration: none;
+}
+
+.pagination .current a {
+    background-color: #2589d0;
+    color: #fff;
+    pointer-events: none;
+}
