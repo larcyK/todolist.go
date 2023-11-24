@@ -31,6 +31,7 @@ func TaskList(ctx *gin.Context) {
 	// Get query parameter
 	kw := ctx.Query("kw")
 	dn := ctx.Query("dn")
+	sort := ctx.Query("sort")
 
 	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	if err != nil || page < 1 {
@@ -53,6 +54,18 @@ func TaskList(ctx *gin.Context) {
 	case "not_done":
 		conditions = append(conditions, fmt.Sprintf("is_done=%t", false))
 	}
+	var sortQuery string = ""
+	switch sort {
+	case "deadline":
+		sortQuery = "ORDER BY deadline"
+	case "id":
+		sortQuery = "ORDER BY id"
+	case "title":
+		sortQuery = "ORDER BY title"
+	default:
+		sortQuery = "ORDER BY id"
+	}
+
 	conditions = append(conditions, fmt.Sprintf("user_id=%d", userID))
 
 	query := "SELECT tasks.* FROM tasks INNER JOIN ownership ON task_id = id "
@@ -62,6 +75,7 @@ func TaskList(ctx *gin.Context) {
 			query += " AND " + c
 		}
 	}
+	query += " " + sortQuery
 
 	// query += fmt.Sprintf(" LIMIT %d OFFSET %d", perPage, offset)
 	err = db.Select(&tasks, query)
@@ -80,6 +94,7 @@ func TaskList(ctx *gin.Context) {
 		"Tasks":     tasks[startTask:endTask],
 		"Kw":        kw,
 		"Dn":        dn,
+		"Sort":      sort,
 		"User":      userID,
 		"Page":      page,
 		"TotalPage": TotalPage,

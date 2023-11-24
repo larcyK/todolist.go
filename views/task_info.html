@@ -47,6 +47,7 @@
     </div>
 </dl>
 <div class="button-container">
+    <!-- <button type="button" class="button-new" onclick="location.href='/task/new'">新規作成</button> -->
     <button type="button" class="button-share" onclick="location.href='/task/share/{{ .Task.ID }}'">共有</button>
     <button type="button" class="button-next" onclick="location.href='/task/edit/{{ .Task.ID }}'">編集</button>
     <button type="button" class="button-delete" onclick="confirm_task_delete('{{ .Task.ID }}', '{{ .Task.Title }}')">削除</button>
