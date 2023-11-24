@@ -3,7 +3,6 @@ package service
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"net/http"
 	"regexp"
 	"unicode/utf8"
@@ -82,11 +81,14 @@ func RegisterUser(ctx *gin.Context) {
 	}
 
 	// DB への保存
-	result, err := db.Exec("INSERT INTO users(name, password) VALUES (?, ?)", username, hash(password))
+	tx := db.MustBegin()
+	result, err := tx.Exec("INSERT INTO users(name, password) VALUES (?, ?)", username, hash(password))
 	if err != nil {
+		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
+	tx.Commit()
 
 	// 保存状態の確認
 	id, _ := result.LastInsertId()
@@ -108,7 +110,6 @@ const userkey = "user"
 func Login(ctx *gin.Context) {
 	username := ctx.PostForm("username")
 	password := ctx.PostForm("password")
-	fmt.Println(username, password)
 
 	db, err := database.GetConnection()
 	if err != nil {
@@ -170,7 +171,7 @@ func DeleteUser(ctx *gin.Context) {
 		return
 	}
 	tx := db.MustBegin()
-	_, err = db.Exec("UPDATE users SET valid = false WHERE id = ?", userID)
+	_, err = tx.Exec("UPDATE users SET valid = false WHERE id = ?", userID)
 	if err != nil {
 		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
@@ -230,7 +231,7 @@ func UpdateUser(ctx *gin.Context) {
 
 	// DB への保存
 	tx := db.MustBegin()
-	result, err := db.Exec("UPDATE users SET name = ? WHERE id = ?", username, sessions.Default(ctx).Get(userkey))
+	result, err := tx.Exec("UPDATE users SET name = ? WHERE id = ?", username, sessions.Default(ctx).Get(userkey))
 	if err != nil {
 		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
@@ -292,7 +293,7 @@ func UpdatePassword(ctx *gin.Context) {
 		return
 	}
 	tx := db.MustBegin()
-	_, err = db.Exec("UPDATE users SET password = ? WHERE id = ?", hash(newPassword), userID)
+	_, err = tx.Exec("UPDATE users SET password = ? WHERE id = ?", hash(newPassword), userID)
 	if err != nil {
 		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)

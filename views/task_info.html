@@ -13,7 +13,11 @@
     </div>
     <div>
         <dt>作成日時</dt>
-        <dd>{{ .Task.CreatedAt.Format "2006-01-02 15:04:05" }}</dd>
+        <dd>{{ .Task.CreatedAt.Format "2006-01-02 15:04" }}</dd>
+    </div>
+    <div>
+        <dt>期限</dt>
+        <dd>{{ .Task.Deadline.Format "2006-01-02 15:04" }}</dd>
     </div>
     <div>
         <dt>説明</dt>

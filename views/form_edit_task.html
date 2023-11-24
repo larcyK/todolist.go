@@ -17,6 +17,10 @@
             <dd><textarea class="textarea" name="detail" placeholder="説明">{{ .Task.Detail }}</textarea></dd>
         </div>
         <div>
+            <dt><label>期限</label></dt>
+            <dd><input type="datetime-local" name="deadline" class="textbox" style="max-width: 200px; height: 50px;" value="{{ .Task.Deadline.Format "2006-01-02T15:04:05" }}" placeholder="期限"></dd>
+        </div>
+        <div>
             <dt><label>状態</label></dt>
             <dd>
                 <label class="toggle-button">

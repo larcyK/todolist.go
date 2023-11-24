@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -44,7 +45,7 @@ func TaskList(ctx *gin.Context) {
 
 	var conditions []string
 	if kw != "" {
-		conditions = append(conditions, fmt.Sprintf("title LIKE '%%%s%%' OR detail LIKE '%%%s%%'", kw, kw))
+		conditions = append(conditions, fmt.Sprintf("(title LIKE '%%%s%%' OR detail LIKE '%%%s%%')", kw, kw))
 	}
 	switch dn {
 	case "done":
@@ -134,10 +135,31 @@ func RegisterTask(ctx *gin.Context) {
 		Error(http.StatusBadRequest, "No title is given")(ctx)
 		return
 	}
+	if title == "" {
+		ctx.HTML(http.StatusOK, "form_new_task.html", gin.H{"Title": "Task registration", "Error": "Title is empty"})
+		return
+	}
 	// Get task detail
 	detail, exist := ctx.GetPostForm("detail")
 	if !exist {
 		Error(http.StatusBadRequest, "No detail is given")(ctx)
+		return
+	}
+	// Get task deadline
+	clientLocation, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	deadline, exist := ctx.GetPostForm("deadline")
+	// fmt.Printf("deadline: %s\n", deadline)
+	if !exist {
+		Error(http.StatusBadRequest, "No deadline is given")(ctx)
+		return
+	}
+	deadlineTime, err := time.ParseInLocation("2006-01-02T15:04", deadline, clientLocation)
+	if err != nil {
+		ctx.HTML(http.StatusOK, "form_new_task.html", gin.H{"Title": "Task registration", "Error": "Invalid deadline"})
 		return
 	}
 	// Get DB connection
@@ -149,7 +171,7 @@ func RegisterTask(ctx *gin.Context) {
 	// Register task
 	tx := db.MustBegin()
 	// Create new data with given title on DB
-	result, err := tx.Exec("INSERT INTO tasks (title, detail) VALUES (?, ?)", title, detail)
+	result, err := tx.Exec("INSERT INTO tasks (title, detail, deadline) VALUES (?, ?, ?)", title, detail, deadlineTime)
 	if err != nil {
 		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
@@ -214,6 +236,22 @@ func UpdateTask(ctx *gin.Context) {
 		Error(http.StatusBadRequest, "No detail is given")(ctx)
 		return
 	}
+	// Get task deadline
+	clientLocation, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+	deadline, exist := ctx.GetPostForm("deadline")
+	if !exist {
+		Error(http.StatusBadRequest, "No deadline is given")(ctx)
+		return
+	}
+	deadlineTime, err := time.ParseInLocation("2006-01-02T15:04", deadline, clientLocation)
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
 	// Get task Status
 	isDone_s, exist := ctx.GetPostForm("is_done")
 	if !exist {
@@ -233,7 +271,7 @@ func UpdateTask(ctx *gin.Context) {
 	}
 	// Update task
 	tx := db.MustBegin()
-	_, err = db.Exec("UPDATE tasks SET title=?, detail=?, is_done=? WHERE id=?", title, detail, isDone, id)
+	_, err = tx.Exec("UPDATE tasks SET title=?, detail=?, deadline=?, is_done=? WHERE id=?", title, detail, deadlineTime, isDone, id)
 	if err != nil {
 		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
@@ -260,13 +298,13 @@ func DeleteTask(ctx *gin.Context) {
 	}
 	tx := db.MustBegin()
 	// Delete the task from DB
-	_, err = db.Exec("DELETE FROM tasks WHERE id=?", id)
+	_, err = tx.Exec("DELETE FROM tasks WHERE id=?", id)
 	if err != nil {
 		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
 	}
-	_, err = db.Exec("DELETE FROM ownership WHERE task_id=?", id)
+	_, err = tx.Exec("DELETE FROM ownership WHERE task_id=?", id)
 	if err != nil {
 		tx.Rollback()
 		Error(http.StatusInternalServerError, err.Error())(ctx)
